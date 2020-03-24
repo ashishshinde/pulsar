@@ -19,7 +19,7 @@
 
 -->
 
-A fork for testing a advertised port feature.
+A fork for testing new advertised port configuration.
 
 To build pulsar distribution only with modified code,
 
