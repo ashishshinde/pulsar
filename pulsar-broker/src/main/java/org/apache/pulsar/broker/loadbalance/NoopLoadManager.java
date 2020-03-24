@@ -60,7 +60,8 @@ public class NoopLoadManager implements LoadManager {
 
     @Override
     public void start() throws PulsarServerException {
-        lookupServiceAddress = pulsar.getAdvertisedAddress() + ":" + pulsar.getConfiguration().getWebServicePort().get();
+        lookupServiceAddress =
+                pulsar.getAdvertisedAddress() + ":" + pulsar.getConfiguration().getAdvertisedWebServicePort().get();
         localResourceUnit = new SimpleResourceUnit(String.format("http://%s", lookupServiceAddress),
                 new PulsarResourceDescription());
         zkClient = pulsar.getZkClient();

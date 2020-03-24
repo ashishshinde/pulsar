@@ -1277,7 +1277,9 @@ public class NamespaceService {
 
     public static String getHeartbeatNamespace(String host, ServiceConfiguration config) {
         Integer port = null;
-        if (config.getWebServicePort().isPresent()) {
+        if(config.getAdvertisedWebServicePort().isPresent()) {
+            port = config.getAdvertisedWebServicePort().get();
+        } else  if (config.getWebServicePort().isPresent()) {
             port = config.getWebServicePort().get();
         } else if (config.getWebServicePortTls().isPresent()) {
             port = config.getWebServicePortTls().get();
@@ -1286,7 +1288,9 @@ public class NamespaceService {
     }
      public static String getSLAMonitorNamespace(String host, ServiceConfiguration config) {
         Integer port = null;
-        if (config.getWebServicePort().isPresent()) {
+         if(config.getAdvertisedWebServicePort().isPresent()) {
+             port = config.getAdvertisedWebServicePort().get();
+         } else if (config.getWebServicePort().isPresent()) {
             port = config.getWebServicePort().get();
         } else if (config.getWebServicePortTls().isPresent()) {
             port = config.getWebServicePortTls().get();

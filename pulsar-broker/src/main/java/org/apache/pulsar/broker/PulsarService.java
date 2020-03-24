@@ -531,8 +531,10 @@ public class PulsarService implements AutoCloseable {
 
             // Refresh addresses, since the port might have been dynamically assigned
             this.webServiceAddress = webAddress(config);
+            LOG.info("Web service address {}", webServiceAddress);
             this.webServiceAddressTls = webAddressTls(config);
             this.brokerServiceUrl = brokerUrl(config);
+            LOG.info("Broker service address {}", brokerServiceUrl);
             this.brokerServiceUrlTls = brokerUrlTls(config);
 
             if (null != this.webSocketService) {
@@ -1122,9 +1124,30 @@ public class PulsarService implements AutoCloseable {
         return ServiceConfigurationUtils.getDefaultOrConfiguredAddress(config.getAdvertisedAddress());
     }
 
+    /**
+     * Advertised service address.
+     *
+     * @return Hostname or IP address the service advertises to the outside world.
+     */
+    public  int advertisedWebServicePort(ServiceConfiguration config) {
+        Optional<Integer> port = config.getAdvertisedWebServicePort();
+        return port.isPresent() ? port.get() : getListenPortHTTP().get();
+    }
+
+    /**
+     * Advertised service address.
+     *
+     * @return Hostname or IP address the service advertises to the outside world.
+     */
+    public  int advertisedBrokerServicePort(ServiceConfiguration config) {
+        Optional<Integer> port = config.getAdvertisedBrokerServicePort();
+        return port.isPresent() ? port.get() :  getBrokerListenPort().get();
+    }
+
     private String brokerUrl(ServiceConfiguration config) {
         if (config.getBrokerServicePort().isPresent()) {
-            return brokerUrl(advertisedAddress(config), getBrokerListenPort().get());
+            return brokerUrl(advertisedAddress(config),
+                    advertisedBrokerServicePort(config));
         } else {
             return null;
         }
@@ -1148,7 +1171,8 @@ public class PulsarService implements AutoCloseable {
 
     public String webAddress(ServiceConfiguration config) {
         if (config.getWebServicePort().isPresent()) {
-            return webAddress(advertisedAddress(config), getListenPortHTTP().get());
+            return webAddress(advertisedAddress(config),
+                    advertisedWebServicePort(config));
         } else {
             return null;
         }

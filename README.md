@@ -19,6 +19,48 @@
 
 -->
 
+A fork for testing a advertised port feature.
+
+To build pulsar distribution only with modified code,
+
+Clone this repository
+```shell script
+git clone git@github.com:ashishshinde/pulsar.git
+```
+
+Checkout 2.5.0 based advertised port feature
+```shell script
+cd pulsar
+git checkout -b v2.5.0-advertisedPort
+```
+
+Build essential modules and server distribution.
+```shell script
+cd pulsar-io
+mvn install -DskipTests
+
+cd ..
+cd pulsar-functions
+mvn install -DskipTests
+
+cd ..
+cd pulsar-sql
+mvn install -DskipTests
+
+cd ..
+cd pulsar-broker
+mvn install -DskipTests
+
+cd ..
+cd pulsar-common
+mvn install -DskipTests
+
+cd ..
+cd distributions/server
+rm -f target/apache-pulsar-2.5.0-bin.tar.gz
+mvn install -DskipTests
+```
+
 ![logo](site2/website/static/img/pulsar.svg)
 
 Pulsar is a distributed pub-sub messaging platform with a very
