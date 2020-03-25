@@ -31,7 +31,7 @@ git clone git@github.com:ashishshinde/pulsar.git
 Checkout 2.5.0 based advertised port feature
 ```shell script
 cd pulsar
-git checkout -b v2.5.0-advertisedPort
+git checkout v2.5.0-advertisedPort
 ```
 
 Build essential modules and server distribution.
