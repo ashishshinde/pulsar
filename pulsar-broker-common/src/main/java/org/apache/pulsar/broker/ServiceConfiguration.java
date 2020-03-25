@@ -164,6 +164,20 @@ public class ServiceConfiguration implements PulsarConfiguration {
     private String internalListenerName;
 
     @FieldContext(
+            category = CATEGORY_SERVER,
+            doc = "Port the broker service advertises to the outside world."
+                    + " If not set, the value of 6650 is used."
+    )
+    private Optional<Integer> advertisedBrokerServicePort = Optional.of(6650);
+
+    @FieldContext(
+            category = CATEGORY_SERVER,
+            doc = "Port the web service advertises to the outside world."
+                    + " If not set, the value of 8080 is used."
+    )
+    private Optional<Integer> advertisedWebServicePort = Optional.of(8080);
+
+    @FieldContext(
         category = CATEGORY_SERVER,
         doc = "Number of threads to use for Netty IO."
             + " Default is set to `2 * Runtime.getRuntime().availableProcessors()`"
