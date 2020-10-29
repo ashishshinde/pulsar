@@ -175,7 +175,7 @@ public class PulsarBrokerStarter {
                 String hostname = ServiceConfigurationUtils.getDefaultOrConfiguredAddress(
                     brokerConfig.getAdvertisedAddress());
                 workerConfig.setWorkerHostname(hostname);
-                Integer port = brokerConfig.getAdvertisedWebServicePort().isPresent() ? brokerConfig.getAdvertisedWebServicePort().get() : brokerConfig.getWebServicePort().get();
+                Integer port = brokerConfig.getAdvertisedWebServicePort().orElse(brokerConfig.getWebServicePort().get());
                 workerConfig.setWorkerPort(port);
                 workerConfig.setWorkerId(
                     "c-" + brokerConfig.getClusterName()

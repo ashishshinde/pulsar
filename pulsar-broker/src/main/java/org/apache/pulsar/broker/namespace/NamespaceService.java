@@ -1281,6 +1281,8 @@ public class NamespaceService {
             port = config.getAdvertisedWebServicePort().get();
         } else  if (config.getWebServicePort().isPresent()) {
             port = config.getWebServicePort().get();
+        } else if (config.getAdvertisedWebServicePortTls().isPresent()) {
+            port = config.getAdvertisedWebServicePortTls().get();
         } else if (config.getWebServicePortTls().isPresent()) {
             port = config.getWebServicePortTls().get();
         }
@@ -1288,12 +1290,14 @@ public class NamespaceService {
     }
      public static String getSLAMonitorNamespace(String host, ServiceConfiguration config) {
         Integer port = null;
-         if(config.getAdvertisedWebServicePort().isPresent()) {
-             port = config.getAdvertisedWebServicePort().get();
-         } else if (config.getWebServicePort().isPresent()) {
-            port = config.getWebServicePort().get();
+        if(config.getAdvertisedWebServicePort().isPresent()) {
+            port = config.getAdvertisedWebServicePort().get();
+        } else if (config.getWebServicePort().isPresent()) {
+           port = config.getWebServicePort().get();
+        } else if (config.getAdvertisedWebServicePortTls().isPresent()) {
+            port = config.getAdvertisedWebServicePortTls().get();
         } else if (config.getWebServicePortTls().isPresent()) {
-            port = config.getWebServicePortTls().get();
+           port = config.getWebServicePortTls().get();
         }
         return String.format(SLA_NAMESPACE_FMT, config.getClusterName(), host, port);
     }
