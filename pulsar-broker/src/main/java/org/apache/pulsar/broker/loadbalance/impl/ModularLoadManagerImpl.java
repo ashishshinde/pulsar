@@ -889,9 +889,9 @@ public class ModularLoadManagerImpl implements ModularLoadManager, ZooKeeperCach
             createZPathIfNotExists(zkClient, LoadManager.LOADBALANCE_BROKERS_ROOT);
 
             String lookupServiceAddress = pulsar.getAdvertisedAddress() + ":"
-                    + (conf.getAdvertisedWebServicePort().orElse(
-                            (conf.getWebServicePort().orElse(
-                                    conf.getAdvertisedWebServicePortTls().orElse(
+                    + (conf.getAdvertisedWebServicePort().orElseGet(() ->
+                            (conf.getWebServicePort().orElseGet(() ->
+                                    conf.getAdvertisedWebServicePortTls().orElseGet(() ->
                                             conf.getWebServicePortTls().get())))));
             brokerZnodePath = LoadManager.LOADBALANCE_BROKERS_ROOT + "/" + lookupServiceAddress;
             final String timeAverageZPath = TIME_AVERAGE_BROKER_ZPATH + "/" + lookupServiceAddress;
