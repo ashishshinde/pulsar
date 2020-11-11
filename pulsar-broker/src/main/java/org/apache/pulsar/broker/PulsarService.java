@@ -535,9 +535,13 @@ public class PulsarService implements AutoCloseable {
 
             // Refresh addresses, since the port might have been dynamically assigned
             this.webServiceAddress = webAddress(config);
+            LOG.info("Web service address {}", webServiceAddress);
             this.webServiceAddressTls = webAddressTls(config);
+            LOG.info("Web service tls address {}", webServiceAddressTls);
             this.brokerServiceUrl = brokerUrl(config);
+            LOG.info("Broker service address {}", brokerServiceUrl);
             this.brokerServiceUrlTls = brokerUrlTls(config);
+            LOG.info("Broker service tls address {}", brokerServiceUrlTls);
 
             if (null != this.webSocketService) {
                 ClusterData clusterData =
@@ -1126,9 +1130,46 @@ public class PulsarService implements AutoCloseable {
         return ServiceConfigurationUtils.getDefaultOrConfiguredAddress(config.getAdvertisedAddress());
     }
 
+    /**
+     * Advertised web service port.
+     *
+     * @return Web service port advertised to the outside world.
+     */
+    public  int advertisedWebServicePort(ServiceConfiguration config) {
+        return config.getAdvertisedWebServicePort().orElseGet(() -> getListenPortHTTP().get());
+    }
+
+    /**
+     * Advertised broker service port.
+     *
+     * @return Broker service port advertised to the outside world.
+     */
+    public  int advertisedBrokerServicePort(ServiceConfiguration config) {
+        return config.getAdvertisedBrokerServicePort().orElseGet(() -> getBrokerListenPort().get());
+    }
+
+    /**
+     * Tls enabled advertised web service port.
+     *
+     * @return Tls enabled web service port advertised to the outside world.
+     */
+    public  int advertisedWebServicePortTls(ServiceConfiguration config) {
+        return config.getAdvertisedWebServicePortTls().orElseGet(() -> getListenPortHTTPS().get());
+    }
+
+    /**
+     * Tls enabled advertised broker service port.
+     *
+     * @return Tls enabled broker service port advertised to the outside world.
+     */
+    public  int advertisedBrokerServicePortTls(ServiceConfiguration config) {
+        return config.getAdvertisedBrokerServicePortTls().orElseGet(() -> getBrokerListenPortTls().get());
+    }
+
     private String brokerUrl(ServiceConfiguration config) {
         if (config.getBrokerServicePort().isPresent()) {
-            return brokerUrl(advertisedAddress(config), getBrokerListenPort().get());
+            return brokerUrl(advertisedAddress(config),
+                    advertisedBrokerServicePort(config));
         } else {
             return null;
         }
@@ -1140,7 +1181,7 @@ public class PulsarService implements AutoCloseable {
 
     public String brokerUrlTls(ServiceConfiguration config) {
         if (config.getBrokerServicePortTls().isPresent()) {
-            return brokerUrlTls(advertisedAddress(config), getBrokerListenPortTls().get());
+            return brokerUrlTls(advertisedAddress(config), advertisedBrokerServicePortTls(config));
         } else {
             return null;
         }
@@ -1152,7 +1193,8 @@ public class PulsarService implements AutoCloseable {
 
     public String webAddress(ServiceConfiguration config) {
         if (config.getWebServicePort().isPresent()) {
-            return webAddress(advertisedAddress(config), getListenPortHTTP().get());
+            return webAddress(advertisedAddress(config),
+                    advertisedWebServicePort(config));
         } else {
             return null;
         }
@@ -1164,7 +1206,7 @@ public class PulsarService implements AutoCloseable {
 
     public String webAddressTls(ServiceConfiguration config) {
         if (config.getWebServicePortTls().isPresent()) {
-            return webAddressTls(advertisedAddress(config), getListenPortHTTPS().get());
+            return webAddressTls(advertisedAddress(config), advertisedWebServicePortTls(config));
         } else {
             return null;
         }
