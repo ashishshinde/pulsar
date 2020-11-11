@@ -149,6 +149,32 @@ public class ServiceConfiguration implements PulsarConfiguration {
     )
     private String advertisedAddress;
 
+    @FieldContext(
+            category = CATEGORY_SERVER,
+            doc = "Port the broker service advertises to the outside world."
+                    + " If not set, the value of 6650 is used."
+    )
+    private Optional<Integer> advertisedBrokerServicePort = Optional.of(6650);
+
+    @FieldContext(
+            category = CATEGORY_SERVER,
+            doc = "Port the web service advertises to the outside world."
+                    + " If not set, the value of 8080 is used."
+    )
+    private Optional<Integer> advertisedWebServicePort = Optional.of(8080);
+
+    @FieldContext(
+            category = CATEGORY_SERVER,
+            doc = "Tls port the broker service advertises to the outside world."
+    )
+    private Optional<Integer> advertisedBrokerServicePortTls = Optional.empty();
+
+    @FieldContext(
+            category = CATEGORY_SERVER,
+            doc = "Tls port the web service advertises to the outside world."
+    )
+    private Optional<Integer> advertisedWebServicePortTls = Optional.empty();
+
     @FieldContext(category=CATEGORY_SERVER,
             doc = "Used to specify multiple advertised listeners for the broker."
                     + " The value must format as <listener_name>:pulsar://<host>:<port>,"

@@ -21,7 +21,6 @@ package org.apache.pulsar.broker.namespace;
 import com.google.common.collect.Lists;
 import com.google.common.hash.Hashing;
 import io.netty.channel.EventLoopGroup;
-
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -66,7 +65,6 @@ import org.apache.pulsar.common.util.ObjectMapperFactory;
 import org.apache.pulsar.common.util.collections.ConcurrentOpenHashMap;
 import org.apache.pulsar.policies.data.loadbalancer.AdvertisedListener;
 import org.apache.pulsar.policies.data.loadbalancer.LocalBrokerData;
-import org.apache.pulsar.policies.data.loadbalancer.ServiceLookupData;
 import org.apache.zookeeper.AsyncCallback.StatCallback;
 import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.KeeperException.Code;
@@ -1209,23 +1207,37 @@ public class NamespaceService {
         LOG.info("Namespace {} unloaded successfully", namespaceName);
     }
 
-    public static String getHeartbeatNamespace(String host, ServiceConfiguration config) {
+    public static String getHeartbeatNamespace(String host,
+                                               ServiceConfiguration config) {
         Integer port = null;
-        if (config.getWebServicePort().isPresent()) {
+        if (config.getAdvertisedWebServicePort().isPresent()) {
+            port = config.getAdvertisedWebServicePort().get();
+        } else if (config.getWebServicePort().isPresent()) {
             port = config.getWebServicePort().get();
+        } else if (config.getAdvertisedWebServicePortTls().isPresent()) {
+            port = config.getAdvertisedWebServicePortTls().get();
         } else if (config.getWebServicePortTls().isPresent()) {
             port = config.getWebServicePortTls().get();
         }
-        return String.format(HEARTBEAT_NAMESPACE_FMT, config.getClusterName(), host, port);
+        return String.format(HEARTBEAT_NAMESPACE_FMT,
+                config.getClusterName(), host, port);
     }
-     public static String getSLAMonitorNamespace(String host, ServiceConfiguration config) {
+
+    public static String getSLAMonitorNamespace(String host,
+                                                ServiceConfiguration config) {
         Integer port = null;
-        if (config.getWebServicePort().isPresent()) {
+        if (config.getAdvertisedWebServicePort().isPresent()) {
+            port = config.getAdvertisedWebServicePort().get();
+        } else if (config.getWebServicePort().isPresent()) {
             port = config.getWebServicePort().get();
+        } else if (config.getAdvertisedWebServicePortTls().isPresent()) {
+            port = config.getAdvertisedWebServicePortTls().get();
         } else if (config.getWebServicePortTls().isPresent()) {
             port = config.getWebServicePortTls().get();
+            port = config.getWebServicePortTls().get();
         }
-        return String.format(SLA_NAMESPACE_FMT, config.getClusterName(), host, port);
+        return String.format(SLA_NAMESPACE_FMT, config.getClusterName(),
+                host, port);
     }
 
     public static String checkHeartbeatNamespace(ServiceUnitId ns) {
