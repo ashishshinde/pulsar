@@ -700,7 +700,7 @@ public class SimpleLoadManagerImpl implements LoadManager, ZooKeeperCacheListene
      */
     private synchronized void doLoadRanking() {
         ResourceUnitRanking.setCpuUsageByMsgRate(this.realtimeCpuLoadFactor);
-        String hostname = pulsar.getAdvertisedAddress();
+        String hostname = pulsar.getSafeWebServiceAddress();
         String strategy = this.getLoadBalancerPlacementStrategy();
         log.info("doLoadRanking - load balancing strategy: {}", strategy);
         if (!currentLoadReports.isEmpty()) {
@@ -1191,10 +1191,7 @@ public class SimpleLoadManagerImpl implements LoadManager, ZooKeeperCacheListene
     }
 
     private String getBrokerAddress() {
-        return String.format("%s:%s", pulsar.getAdvertisedAddress(),
-                pulsar.getConfiguration().getWebServicePort().isPresent()
-                        ? pulsar.getConfiguration().getWebServicePort().get()
-                        : pulsar.getConfiguration().getWebServicePortTls());
+        return pulsar.getSafeWebServiceAddress();
     }
 
     @Override

@@ -172,11 +172,13 @@ public class PulsarBrokerStarter {
                 String hostname = ServiceConfigurationUtils.getDefaultOrConfiguredAddress(
                     brokerConfig.getAdvertisedAddress());
                 workerConfig.setWorkerHostname(hostname);
-                workerConfig.setWorkerPort(brokerConfig.getWebServicePort().get());
+                Integer port = brokerConfig.getAdvertisedWebServicePort().orElseGet(
+                        () ->brokerConfig.getWebServicePort().get());
+                workerConfig.setWorkerPort(port);
                 workerConfig.setWorkerId(
                     "c-" + brokerConfig.getClusterName()
                         + "-fw-" + hostname
-                        + "-" + workerConfig.getWorkerPort());
+                        + "-" + port);
                 // inherit broker authorization setting
                 workerConfig.setAuthenticationEnabled(brokerConfig.isAuthenticationEnabled());
                 workerConfig.setAuthenticationProviders(brokerConfig.getAuthenticationProviders());
