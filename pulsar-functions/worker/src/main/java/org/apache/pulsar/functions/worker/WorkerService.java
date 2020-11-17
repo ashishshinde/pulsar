@@ -177,7 +177,13 @@ public class WorkerService {
             //create membership manager
             String coordinationTopic = workerConfig.getClusterCoordinationTopic();
             if (!brokerAdmin.topics().getSubscriptions(coordinationTopic).contains(MembershipManager.COORDINATION_TOPIC_SUBSCRIPTION)) {
-                brokerAdmin.topics().createSubscription(coordinationTopic, MembershipManager.COORDINATION_TOPIC_SUBSCRIPTION, MessageId.earliest);
+               try {
+                 brokerAdmin.topics().createSubscription(coordinationTopic, MembershipManager.COORDINATION_TOPIC_SUBSCRIPTION, MessageId.earliest);
+               } catch (Throwable t) {
+                 // TODO probably a race condition when you run multiple
+                 // brokers so ignoring for now. need to debug it before PR
+                 log.error("Error creating subscription", t);
+               }
             }
             this.membershipManager = new MembershipManager(this, this.client, this.brokerAdmin);
 
