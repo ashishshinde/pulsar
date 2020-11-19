@@ -157,7 +157,7 @@ public class KeyStoreTlsProducerConsumerTestWithoutAuth extends ProducerConsumer
         log.info("-- Starting {} test --", methodName);
 
         final int MESSAGE_SIZE = 16 * 1024 + 1;
-        log.info("-- message size --", MESSAGE_SIZE);
+        log.info("-- message size -- {}", MESSAGE_SIZE);
         String topicName = "persistent://my-property/use/my-ns/testTlsLargeSizeMessage"
                            + System.currentTimeMillis();
 
