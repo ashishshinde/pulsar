@@ -1287,8 +1287,7 @@ public class NamespaceService {
         } else if (config.getWebServicePortTls().isPresent()) {
             port = config.getWebServicePortTls().get();
         }
-        return String.format(HEARTBEAT_NAMESPACE_FMT,
-                config.getClusterName(), host, port);
+        return String.format(HEARTBEAT_NAMESPACE_FMT, config.getClusterName(), host, port);
     }
 
     public static String getSLAMonitorNamespace(String host,
@@ -1304,8 +1303,7 @@ public class NamespaceService {
             port = config.getWebServicePortTls().get();
             port = config.getWebServicePortTls().get();
         }
-        return String.format(SLA_NAMESPACE_FMT, config.getClusterName(),
-                host, port);
+        return String.format(SLA_NAMESPACE_FMT, config.getClusterName(), host, port);
     }
 
     public static String checkHeartbeatNamespace(ServiceUnitId ns) {
