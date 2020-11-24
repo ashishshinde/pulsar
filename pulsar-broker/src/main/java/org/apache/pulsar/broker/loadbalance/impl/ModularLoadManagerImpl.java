@@ -29,6 +29,7 @@ import com.google.common.collect.Multimap;
 import io.netty.util.concurrent.DefaultThreadFactory;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -888,7 +889,7 @@ public class ModularLoadManagerImpl implements ModularLoadManager, ZooKeeperCach
             // Register the brokers in zk list
             createZPathIfNotExists(zkClient, LoadManager.LOADBALANCE_BROKERS_ROOT);
 
-            String lookupServiceAddress = pulsar.getAdvertisedAddress() + ":"
+            String lookupServiceAddress = InetAddress.getLocalHost().getHostName() + ":"
                     + (conf.getWebServicePort().isPresent() ? conf.getWebServicePort().get()
                             : conf.getWebServicePortTls().get());
             brokerZnodePath = LoadManager.LOADBALANCE_BROKERS_ROOT + "/" + lookupServiceAddress;

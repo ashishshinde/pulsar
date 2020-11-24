@@ -73,7 +73,7 @@ public class PulsarStats implements Closeable {
         this.tempMetricsCollection = Lists.newArrayList();
         this.metricsCollection = Lists.newArrayList();
         this.brokerOperabilityMetrics = new BrokerOperabilityMetrics(pulsar.getConfiguration().getClusterName(),
-                pulsar.getAdvertisedAddress());
+                pulsar.getSafeWebServiceAddress());
         this.tempNonPersistentTopics = Lists.newArrayList();
 
         this.exposePublisherStats = pulsar.getConfiguration().isExposePublisherStats();
