@@ -62,11 +62,7 @@ public class NoopLoadManager implements LoadManager {
 
     @Override
     public void start() throws PulsarServerException {
-        try {
-            lookupServiceAddress = InetAddress.getLocalHost().getHostName() + ":" + pulsar.getConfiguration().getWebServicePort().get();
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        }
+        lookupServiceAddress = PulsarService.advertisedAddress(pulsar.getConfiguration()) + ":" + pulsar.getConfiguration().getWebServicePort().get();
         localResourceUnit = new SimpleResourceUnit(String.format("http://%s", lookupServiceAddress),
                 new PulsarResourceDescription());
         zkClient = pulsar.getZkClient();
