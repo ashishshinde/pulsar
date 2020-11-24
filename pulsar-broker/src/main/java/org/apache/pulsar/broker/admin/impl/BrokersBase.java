@@ -299,7 +299,7 @@ public class BrokersBase extends AdminResource {
     public void healthcheck(@Suspended AsyncResponse asyncResponse) throws Exception {
         validateSuperUserAccess();
         String heartbeatNamespace = NamespaceService.getHeartbeatNamespace(
-                pulsar().getAdvertisedAddress(), pulsar().getConfiguration());
+                pulsar().getAdvertisedAddress(), pulsar().getAdvertisedPort(), pulsar().getConfiguration());
         String topic = String.format("persistent://%s/healthcheck", heartbeatNamespace);
 
         PulsarClient client = pulsar().getClient();

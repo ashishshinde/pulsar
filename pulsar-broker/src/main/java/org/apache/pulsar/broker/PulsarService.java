@@ -193,6 +193,7 @@ public class PulsarService implements AutoCloseable {
     private ZooKeeperClientFactory zkClientFactory = null;
     private final String bindAddress;
     private final String advertisedAddress;
+    private final int advertisedPort;
     private String webServiceAddress;
     private String webServiceAddressTls;
     private String brokerServiceUrl;
@@ -246,9 +247,12 @@ public class PulsarService implements AutoCloseable {
         // use `internalListenerName` listener as `advertisedAddress`
         this.bindAddress = ServiceConfigurationUtils.getDefaultOrConfiguredAddress(config.getBindAddress());
         if (!this.advertisedListeners.isEmpty()) {
-            this.advertisedAddress = this.advertisedListeners.get(config.getInternalListenerName()).getBrokerServiceUrl().getHost();
+            URI brokerServiceUrl = this.advertisedListeners.get(config.getInternalListenerName()).getBrokerServiceUrl();
+            this.advertisedAddress = brokerServiceUrl.getHost();
+            this.advertisedPort = brokerServiceUrl.getPort();
         } else {
             this.advertisedAddress = advertisedAddress(config);
+            this.advertisedPort = config.getWebServicePort().orElseGet(() -> config.getWebServicePortTls().get());
         }
         this.brokerVersion = PulsarVersion.getVersion();
         this.config = config;
@@ -651,7 +655,7 @@ public class PulsarService implements AutoCloseable {
     protected void acquireSLANamespace() {
         try {
             // Namespace not created hence no need to unload it
-            String nsName = NamespaceService.getSLAMonitorNamespace(getAdvertisedAddress(), config);
+            String nsName = NamespaceService.getSLAMonitorNamespace(getAdvertisedAddress(), advertisedPort, config);
             if (!this.globalZkCache.exists(
                     AdminResource.path(POLICIES) + "/" + nsName)) {
                 LOG.info("SLA Namespace = {} doesn't exist.", nsName);

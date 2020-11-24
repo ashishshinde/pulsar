@@ -138,6 +138,7 @@ public class NamespaceService {
     private int uncountedNamespaces;
 
     private final String host;
+    private final int port;
 
     private static final int BUNDLE_SPLIT_RETRY_LIMIT = 7;
 
@@ -174,6 +175,7 @@ public class NamespaceService {
     public NamespaceService(PulsarService pulsar) {
         this.pulsar = pulsar;
         host = pulsar.getAdvertisedAddress();
+        port = pulsar.getAdvertisedPort();
         this.config = pulsar.getConfiguration();
         this.loadManager = pulsar.getLoadManager();
         this.bundleFactory = new NamespaceBundleFactory(pulsar, Hashing.crc32());
@@ -288,9 +290,9 @@ public class NamespaceService {
     public void registerBootstrapNamespaces() throws PulsarServerException {
 
         // ensure that we own the heartbeat namespace
-        if (registerNamespace(getHeartbeatNamespace(host, config), true)) {
+        if (registerNamespace(getHeartbeatNamespace(host, port, config), true)) {
             this.uncountedNamespaces++;
-            LOG.info("added heartbeat namespace name in local cache: ns={}", getHeartbeatNamespace(host, config));
+            LOG.info("added heartbeat namespace name in local cache: ns={}", getHeartbeatNamespace(host, port, config));
         }
 
         // we may not need strict ownership checking for bootstrap names for now
@@ -1258,7 +1260,7 @@ public class NamespaceService {
 
     public void unloadSLANamespace() throws Exception {
         PulsarAdmin adminClient = null;
-        String namespaceName = getSLAMonitorNamespace(host, config);
+        String namespaceName = getSLAMonitorNamespace(host, port, config);
 
         LOG.info("Checking owner for SLA namespace {}", namespaceName);
 
@@ -1275,22 +1277,11 @@ public class NamespaceService {
         LOG.info("Namespace {} unloaded successfully", namespaceName);
     }
 
-    public static String getHeartbeatNamespace(String host, ServiceConfiguration config) {
-        Integer port = null;
-        if (config.getWebServicePort().isPresent()) {
-            port = config.getWebServicePort().get();
-        } else if (config.getWebServicePortTls().isPresent()) {
-            port = config.getWebServicePortTls().get();
-        }
+    public static String getHeartbeatNamespace(String host, int port, ServiceConfiguration config) {
         return String.format(HEARTBEAT_NAMESPACE_FMT, config.getClusterName(), host, port);
     }
-     public static String getSLAMonitorNamespace(String host, ServiceConfiguration config) {
-        Integer port = null;
-        if (config.getWebServicePort().isPresent()) {
-            port = config.getWebServicePort().get();
-        } else if (config.getWebServicePortTls().isPresent()) {
-            port = config.getWebServicePortTls().get();
-        }
+
+    public static String getSLAMonitorNamespace(String host, int port, ServiceConfiguration config) {
         return String.format(SLA_NAMESPACE_FMT, config.getClusterName(), host, port);
     }
 
@@ -1314,16 +1305,16 @@ public class NamespaceService {
     }
 
     public boolean registerSLANamespace() throws PulsarServerException {
-        boolean isNameSpaceRegistered = registerNamespace(getSLAMonitorNamespace(host, config), false);
+        boolean isNameSpaceRegistered = registerNamespace(getSLAMonitorNamespace(host, port, config), false);
         if (isNameSpaceRegistered) {
             this.uncountedNamespaces++;
 
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Added SLA Monitoring namespace name in local cache: ns={}",
-                        getSLAMonitorNamespace(host, config));
+                        getSLAMonitorNamespace(host, port, config));
             }
         } else if (LOG.isDebugEnabled()) {
-            LOG.debug("SLA Monitoring not owned by the broker: ns={}", getSLAMonitorNamespace(host, config));
+            LOG.debug("SLA Monitoring not owned by the broker: ns={}", getSLAMonitorNamespace(host, port, config));
         }
         return isNameSpaceRegistered;
     }
